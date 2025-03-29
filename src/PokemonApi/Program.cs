@@ -1,4 +1,5 @@
 using System.Reflection.Metadata.Ecma335;
+using System.Text.Json;
 using PokemonApi;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,19 +40,24 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
-app.MapGet("/hello", () =>
+app.MapGet("GetPokemon/{nameOrId}", async (string nameOrId) =>
 {
-    return "Hello";
-})
-.WithName("GetHello")
-.WithOpenApi();
-;
+    var pokemon = await PokiApiClient.GetPokemon(nameOrId);
 
-app.MapGet("GetPokemon", async () =>
-{
-    await PokiApiClient.GetPokemon("pikachu");
+    return pokemon;
 })
 .WithName("GetPokemon")
+.WithSummary("Get one Pokemon by Name or ID")
+.WithOpenApi();
+
+app.MapGet("GetPokemonPaginated", async (int? limit, int? offset) =>
+{
+    var pokemonList = await PokiApiClient.GetPokemonPaginated(limit, offset);
+
+    return pokemonList;
+})
+.WithName("GetPokemonPaginated")
+.WithSummary("Get a paginated list of Pokemons, limit and offset are not required. Default limit value is 20")
 .WithOpenApi();
 
 app.Run();
