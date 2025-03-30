@@ -25,26 +25,6 @@ app.MapGet("GetPokemon/{nameOrId}", async (string nameOrId) =>
 {
     var pokemon = await PokiApiClient.GetPokemon(nameOrId);
 
-    if (pokemon == null)
-    {
-        ResponseMessage responseMessage = new ResponseMessage(){
-            StatusCode = HttpStatusCode.InternalServerError,
-            StatusMessage = "InternalServerError"
-        };
-
-        return responseMessage;
-    }
-
-    if (pokemon != null && pokemon.StatusCode != HttpStatusCode.OK)
-    {
-        ResponseMessage responseMessage = new ResponseMessage(){
-            StatusCode = pokemon.StatusCode,
-            StatusMessage = pokemon.StatusMessage
-        };
-
-        return responseMessage;
-    }
-
     return pokemon;
 })
 .WithName("GetPokemon")

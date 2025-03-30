@@ -2,7 +2,7 @@
 
 namespace PokemonApi;
 
-public class Pokemon : ResponseMessage
+public class Pokemon
 {
     [JsonPropertyName("id")]
     public int Id { get; set; }
