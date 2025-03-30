@@ -1,5 +1,6 @@
 ﻿namespace PokemonApi;
 
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +21,14 @@ public class PokiApiClient
         {
             string requestUri = $"{uriBasePokiApi}/{searchParam}";
             using HttpResponseMessage response = await httpClient.GetAsync(requestUri);
-            response.EnsureSuccessStatusCode();
 
-            var pokemonResponse = response.Content.ReadFromJsonAsync<Pokemon>().Result;
-            pokemon = pokemonResponse;
+            pokemon.StatusCode = response.StatusCode;
+            pokemon.StatusMessage = response.Content.ReadAsStringAsync().Result;
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                var pokemonResponse = response.Content.ReadFromJsonAsync<Pokemon>().Result;
+                pokemon = pokemonResponse;
+            }
         }
         catch (System.Exception)
         {
